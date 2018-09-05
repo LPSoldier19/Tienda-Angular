@@ -1,41 +1,44 @@
- import { Component, OnInit } from '@angular/core';
-import { Router, ActivatedRoute } from '@angular/router';
-import { HttpService } from '../http.service';
+import { Component, OnInit } from '@angular/core';
+import { HttpService } from './../http.service';
+import { Router, RouterModule } from '@angular/router';
 import { Response } from '@angular/http';
+import { Injectable } from '@angular/core';
+
+declare var jQuery:any;
+declare var $:any;
+declare var myself: any;
 
 @Component({
-  selector: 'app-login',
+  selector: 't-login',
   templateUrl: './login.component.html',
   styleUrls: ['./login.component.css']
 })
-export class LoginComponent implements OnInit {
-	model: any = {};
-	loading = false;
-  returnUrl: string;
-  error:string;
 
-  constructor(private httpService : HttpService, private router: Router, private route: ActivatedRoute) { }
+export class LoginComponent implements OnInit {
+
+  constructor(private router: Router,private httpService: HttpService) { }
 
   ngOnInit() {
-    this.returnUrl = this.route.snapshot.queryParams['returnUrl'] || '/';
+     let myself = this;
+     $("#btn_login").click(function(){
+        myself.onLogin();
+     });
   }
 
-  login(){
-  	this.loading = true;
-
-  	this.httpService.validarUsuario(this.model.email,this.model.password).subscribe(
-  		data => {
-        if(data.loginMsg == "Ok") {
-          this.router.navigate(['/dash']);
-        } else {
-            this.error = data.loginMsg;
-        }
-        this.loading = false;
-      }, error => {
-        console.log(error);
-        this.loading = false;
-      }
-  	);
-  }
-
+   //----------------------------------------------------------------------------
+   onLogin() {
+   //----------------------------------------------------------------------------
+      this.httpService.valUser($("#email").val(),$("#password").val())
+      .subscribe(
+        (data: Response) => {
+           console.log(data["msg"]);
+            if (data["msg"] == "OK") {
+               sessionStorage.setItem("username", $("#email").val());
+               sessionStorage.setItem("counter",data["cuenta"]);
+               this.router.navigateByUrl('/catalogo');
+            } else {
+               alert(data["msg"])
+            }
+      });
+   }
 }

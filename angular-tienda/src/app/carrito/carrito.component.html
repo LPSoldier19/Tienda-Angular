@@ -1,38 +1,21 @@
- <div id="carrito">
-	<div class="cabecera">
-		<h2 class="titulo">Carrito de compras</h2>
-	</div>
-	<div class="detallecarrito">
-		<div class="lista">
-			<ul>
-				<li *ngFor="let caritem of carItems">
-					<div class="itemdata">
-						<div class="isq">
-							<img src="/assets/{{caritem.item.img}}">
-						</div>
-						<div class="der">
-							<p>{{caritem.item.nombre}}</p>
-							<p>Unidades: {{caritem.cantidad}}</p>
-						</div>
-					</div>
-					<div class="subtotal">
-						<p>Subtotal: ${{caritem.item.precio*caritem.cantidad}}</p>
-					</div>
-				</li>
-			</ul>
-		</div>
-		<div class="total">
-			<div>
-				<h2 class="titulo">Total: ${{total}}</h2>
-			</div>
-			<div>
-				<a class="boton" [routerLink]="['../catalogo']">Cancelar</a>
-				<a class="boton" (click)="pagar();">Pagar</a>
-			</div>
-			<div class="progressBar">
-        		<img *ngIf="loading" src="/assets/progress_bar.gif" />
-    		</div>
-    		<div *ngIf="error" class="alertaUp">{{error}}</div>
-		</div>
-	</div>
+<div class="fondo">
+   <nav>
+    <div class="nav-wrapper">
+      <a href="#!" class="brand-logo">La Bodega</a>
+    </div>
+  </nav>
+
+   <div class="container card">
+      <div class="row rowCarrito">
+         <div class="col s1 m6 l6">
+            <h4>Carrito de Compras</h4>
+         </div>
+
+         <div class="col s1 m6 l6">
+            <h5 id="titulo">Total:</h5>
+            <a [routerLink]="['/catalogo']" id='btn_cancelar' class='btn green waves-effect waves-light'>Cancelar</a>
+            <a id='btn_pagar' class='btn green waves-effect waves-light'>Pagar</a>
+         </div>
+      </div>
+   </div>
 </div>

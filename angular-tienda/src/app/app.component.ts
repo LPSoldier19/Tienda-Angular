@@ -1,17 +1,12 @@
- import { Component } from '@angular/core';
-import { CarShopingService } from './car-shoping.service';
-import { LoginComponent } from './login/login.component';
-import { DashComponent } from './dash/dash.component';
-import { MenubarComponent } from './menubar/menubar.component';
+import { Component } from '@angular/core';
 import { CatalogoComponent } from './catalogo/catalogo.component';
-import { DetalleitemComponent } from './detalleitem/detalleitem.component';
-import { CarritoComponent } from './carrito/carrito.component';
+import { LoginComponent } from './login/login.component';
 
 @Component({
-  selector: 'app-root',
+  selector: 't-root',
   templateUrl: './app.component.html',
- // styleUrls: ['./app.component.css'],
-  providers: [CarShopingService],
+  styleUrls: ['./app.component.css']
 })
+
 export class AppComponent {
 }

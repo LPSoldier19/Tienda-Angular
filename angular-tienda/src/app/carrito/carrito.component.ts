@@ -1,45 +1,96 @@
- import { Component, OnInit } from '@angular/core';
-import { CarShopingService } from '../car-shoping.service';
-import { HttpService } from '../http.service';
-import { Router } from '@angular/router';
+import { Component, OnInit } from '@angular/core';
+import { Injectable } from '@angular/core';
+import { HttpService } from './../http.service';
+import { Response } from '@angular/http';
+import { Router, RouterModule } from '@angular/router';
+
+declare var jQuery:any;
+declare var $:any;
+declare var myself: any;
 
 @Component({
-  selector: 'app-carrito',
+  selector: 't-carrito',
   templateUrl: './carrito.component.html',
   styleUrls: ['./carrito.component.css']
 })
 export class CarritoComponent implements OnInit {
-  carItems : any[] = [];
-  total = 0;
-  loading = false;
-  error:string;
-  constructor(private carShopingService : CarShopingService, private httpService : HttpService, private router: Router) { }
+
+  constructor(private router: Router,private httpService: HttpService) { }
 
   ngOnInit() {
-  	this.carItems = this.carShopingService.getCarShoping();
-  	
-  	for (var i = 0; i < this.carItems.length; i++) {
-  		this.total += this.carItems[i].item.precio*this.carItems[i].cantidad;
-  	}
+     this.getData();
+
+     let myself = this;
+     $("#btn_pagar").click(function(){
+        myself.onPay();
+     });
   }
 
-  pagar(){
-    this.loading = true;
-    let itemsUp = this.carShopingService.getArticulos();
-    this.httpService.postDatos(itemsUp).subscribe(
-      data => {
-        if(data.updateMsg == "Ok") {
-          this.carShopingService.setCarShoping();
-          this.router.navigate(['/dash']);
-        } else {
-            this.error = data.updateMsg;
-        }
-        this.loading = false;
-      }, error => {
-        console.log(error);
-        this.loading = false;
-      }
-    );
+
+  //----------------------------------------------------------------------------
+  onPay() {
+  //----------------------------------------------------------------------------
+     let wUsername = sessionStorage.getItem("username");
+
+     this.httpService.delCarrito(wUsername)
+     .subscribe(
+      (data: Response) => {
+          //console.log(data["msg"]);
+           if (data["msg"] == "OK") {
+              alert("Se realizó el pago");
+              sessionStorage.setItem("counter","0");
+              this.router.navigateByUrl('/catalogo');
+           } else {
+              alert(data["msg"])
+           }
+     });
   }
 
+
+  //----------------------------------------------------------------------------
+  getData(){
+  //----------------------------------------------------------------------------
+      let wUsername = sessionStorage.getItem("username");
+      let myself = this;
+
+      this.httpService.getCarrito(wUsername)
+      .subscribe(
+         (data: Response) => {
+            //console.log(data);
+            for (let key in data) {
+               let arrayCat = data[key];
+               let total = 0;
+               for (let i=0; i<arrayCat.length; i++) {
+                  //console.log(item);
+                  let celda = $(this.cardItem(arrayCat[i]));
+      	         $(".rowCarrito").append(celda);
+                  total = total + (arrayCat[i].cantidad*arrayCat[i].precio);
+               }
+               $("#titulo").text("Total : " + (Math.round(total * 100) / 100));
+               break;
+            }
+         }
+      )
+  }
+
+
+
+  //----------------------------------------------------------------------------
+  cardItem(pvItem) {
+  //----------------------------------------------------------------------------
+     return "<div class='col s2 m2 l2'> "+
+              "<div class='card'> " +
+                 "<div class='card-image'> " +
+                    "<img src='../../assets/img/"+pvItem.imagen+"'> " +
+                 "</div> " +
+                 "<div class='card-stacked'> " +
+                    "<div class='card-content'> " +
+                       "<p style='font-size:12px'>"+pvItem.descripcion+"</p> " +
+                       "<p style='font-size:12px'>Unidades: "+pvItem.cantidad+"</p> " +
+                       "<p style='font-size:12px'>SubTotal: "+(pvItem.cantidad*pvItem.precio)+"</p> " +
+                    "</div> "+
+                 "</div> "+
+             "</div> " +
+           "</div> ";
+  };
 }
